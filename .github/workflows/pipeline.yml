@@ -22,7 +22,7 @@ jobs:
             -   uses: actions/setup-node@v4
                 with:
                     cache: 'npm'
-                    node-version: 14
+                    node-version: 16
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
     lint:
@@ -35,7 +35,7 @@ jobs:
             -   uses: actions/setup-node@v4
                 with:
                     cache: 'npm'
-                    node-version: 14
+                    node-version: 16
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
             -   name: Lint
@@ -51,7 +51,7 @@ jobs:
             -   uses: actions/setup-node@v4
                 with:
                     cache: 'npm'
-                    node-version: 14
+                    node-version: 16
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
             -   name: Build
@@ -71,7 +71,7 @@ jobs:
             -   uses: actions/setup-node@v4
                 with:
                     cache: 'npm'
-                    node-version: 14
+                    node-version: 16
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
             -   uses: actions/download-artifact@v2
@@ -91,7 +91,7 @@ jobs:
             -   uses: actions/setup-node@v4
                 with:
                     cache: 'npm'
-                    node-version: 14
+                    node-version: 16
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
             -   uses: actions/download-artifact@v2
