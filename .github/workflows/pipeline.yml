@@ -8,14 +8,14 @@ on:
         branches: [main]
         types: [opened, synchronize]
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
-    deploy:
+    lint:
         runs-on: ubuntu-latest
         steps:
-            -   name: Cancel previous redundant builds
-                uses: styfle/cancel-workflow-action@0.9.1
-                with:
-                    access_token: ${{ github.token }}
             -   uses: actions/checkout@v4
                 with:
                     fetch-depth: 0
@@ -26,16 +26,78 @@ jobs:
                 run: npm install --no-audit --no-fund --no-optional
             -   name: Lint
                 run: npm run eslint
+    
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 14
+            -   name: Install dependencies
+                run: npm install --no-audit --no-fund --no-optional
             -   name: Build
                 run: npm run build
+            -   uses: actions/upload-artifact@v2
+                with:
+                    name: dist
+                    path: dist
+
+    tests:
+        needs: [lint, build]
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 14
+            -   name: Install dependencies
+                run: npm install --no-audit --no-fund --no-optional
+            -   uses: actions/download-artifact@v2
+                with:
+                    name: dist
+                    path: dist
             -   name: Test
                 run: npm run test
+    
+    e2e:
+        needs: [lint, build]
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 14
+            -   name: Install dependencies
+                run: npm install --no-audit --no-fund --no-optional
+            -   uses: actions/download-artifact@v2
+                with:
+                    name: dist
+                    path: dist
             -   name: E2E test
                 uses: cypress-io/github-action@v6
                 with:
                     command: npm run test:e2e
                     start: npm run start-test
                     wait-on: http://localhost:4000
+
+    deploy:
+        needs: [tests, e2e]
+        runs-on: ubuntu-latest
+        steps:
+            # -   name: Cancel previous redundant builds
+            #     uses: styfle/cancel-workflow-action@0.9.1
+            #     with:
+            #         access_token: ${{ github.token }}
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
             -   name: Deploy to Heroku
                 if: ${{ github.event_name == 'push' }}
                 uses: akhileshns/heroku-deploy@v3.13.15
@@ -43,5 +105,5 @@ jobs:
                     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
                     heroku_app_name: ${{secrets.HEROKU_APP}}
                     heroku_email: ${{secrets.HEROKU_API_EMAIL}}
-                    healthcheck: "https://${{secrets.HEROKU_APP}}.herokuapp.com/health"
-                    rollbackonhealthcheckfailed: true
+                    # healthcheck: "https://${{secrets.HEROKU_APP}}.herokuapp.com/health"
+                    # rollbackonhealthcheckfailed: true
