@@ -1,9 +1,13 @@
 import React from 'react'
-import { createRoot } from 'react-dom'
+// import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import App from './App'
 import './styles.css'
-const container = document.getElementById('app')
-const root = createRoot(container)
 
-root.render(<App />)
-// ReactDOM.render(<App />, )
+const $app = document.getElementById('app')
+
+if ($app) {
+  const root = createRoot($app)
+  root.render(<App />)
+}
+// ReactDOM.render(<App />, $app)
