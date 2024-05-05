@@ -34,6 +34,7 @@ jobs:
                     fetch-depth: 0
             -   uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: 14
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
@@ -49,6 +50,7 @@ jobs:
                     fetch-depth: 0
             -   uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: 14
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
@@ -68,6 +70,7 @@ jobs:
                     fetch-depth: 0
             -   uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: 14
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
@@ -87,6 +90,7 @@ jobs:
                     fetch-depth: 0
             -   uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: 14
             -   name: Install dependencies
                 run: npm install --no-audit --no-fund --no-optional
