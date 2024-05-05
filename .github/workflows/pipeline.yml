@@ -4,6 +4,9 @@ on:
     push:
         branches:
             - main
+    pull_request: 
+        branches: [main]
+        types: [opened, synchronize]
 
 jobs:
     deploy:
@@ -30,10 +33,11 @@ jobs:
                     start: npm run start-test
                     wait-on: http://localhost:4000
             -   name: Deploy to Heroku
+                if: ${{ github.event_name == 'push' }}
                 uses: akhileshns/heroku-deploy@v3.13.15
                 with:
                     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
                     heroku_app_name: ${{secrets.HEROKU_APP}}
                     heroku_email: ${{secrets.HEROKU_API_EMAIL}}
-                    healthcheck: "https://${{secrets.HEROKU_APP}}/health"
+                    healthcheck: "https://${{secrets.HEROKU_APP}}.herokuapp.com/health"
                     rollbackonhealthcheckfailed: true
